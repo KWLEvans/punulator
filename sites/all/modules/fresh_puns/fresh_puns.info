@@ -1,0 +1,5 @@
+name = Fresh Puns
+description = Fresh pun ajax loader module
+package = Pun Tools (Ptools)
+core = 7.x
+files[] = fresh_puns.module
