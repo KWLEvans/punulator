@@ -75,5 +75,5 @@ function punspiration_callback($form, &$form_state) {
   //   $rhyming_words[] = $object->word;
   // }
 
-  return parse_return($api_response);
+  return 'Rhyming words: ' . parse_return($api_response);
 }

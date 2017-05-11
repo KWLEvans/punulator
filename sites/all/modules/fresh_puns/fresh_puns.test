@@ -53,29 +53,29 @@ class FreshPunTestCase extends DrupalWebTestCase {
   }
 }
 
-class FreshPunAJAXTestCase extends DrupalUnitTestCase {
+class FreshPunParseTestCase extends DrupalUnitTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Fresh Pun Unit Tests',
-      'description' => 'Tests for Fresh Pun AJAX calls',
+      'description' => 'Tests parse response function in api call',
       'group' => 'Ptools',
     );
   }
 
-  function testNoJSRedirect() {
-    $description = 'If javascript is disabled';
+  function testParseFunction() {
+    $description = 'Properly parses api response into comma seperated string';
 
-    //Arrange
-    $settings = array(
-      'type' => 'pun',
-      'title' => $this->randomName(10),
-      'body' => array(LANGUAGE_NONE => array(array($this->randomName(61)))),
-    );
-    $node = $this->drupalCreateNode($settings);
+    $response_data = new stdClass();
+    $response_data->data =
+      "[{\"word\":\"fretful\",\"score\":302,\"numSyllables\":2},{\"word\":\"regretful\",\"score\":210,\"numSyllables\":3},{\"word\":\"threatful\",\"score\":67,\"numSyllables\":2}]";
 
-    $path = fresh_puns_ajax_callback('nojs',$node->$nid);
-    var_dump($path);
-    $this->assertTrue($path, $description);
+    $result = parse_return($response_data);
+
+    $expected_result = 'fretful, regretful, threatful';
+
+    $this->assertEqual($result, $expected_result, $description);
   }
+
+
 
 }
