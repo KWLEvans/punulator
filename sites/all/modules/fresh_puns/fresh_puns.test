@@ -1,0 +1,54 @@
+<?php
+
+class FreshPunTestCase extends DrupalWebTestCase {
+  protected $privileged_user;
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Fresh Pun Tests',
+      'description' => 'Make sure that Ptools are working correctly.',
+      'group' => 'Ptools',
+    );
+  }
+
+  public function setUp() {
+    parent::setUp(array('fresh_puns'));
+    module_enable(array('ptools'), TRUE);
+
+    $this->privileged_user = $this->drupalCreateAuthenticatedUser(array());
+    $this->drupalLogin($this->privileged_user);
+  }
+
+
+  public function testPunCreate() {
+    $edit = array();
+    $edit['title'] = $this->randomName(8);
+    $edit["body[und][0][value]"] = $this->randomName(16);
+    $this->drupalPost('node/add/pun', $edit, t('Save'));
+    $this->assertText(t('Pun @title has been created.', array('@title' => $edit['title'])));
+  }
+
+  public function testPunEdit() {
+    $settings = array(
+      'type' => 'pun',
+      'title' => $this->randomName(10),
+      'body' => array(LANGUAGE_NONE => array(array($this->randomName(61)))),
+    );
+    $node = $this->drupalCreateNode($settings);
+
+    $edit = array();
+    $edit['title'] = 'Did it!';
+
+    $this->drupalPost('/node/1/edit', $edit, t('Save'));
+
+    $this->assertText(t('Pun @title has been updated.', array('@title' => $edit['title'])));
+  }
+
+  public function drupalCreateAuthenticatedUser(array $permissions = array()) {
+        $roles = user_roles();
+        $index = array_search('authenticated', $roles);
+        $user = $this->drupalCreateUser($permissions);
+        $user->roles[$index] = 'authenticated';
+        return user_save($user);
+  }
+}

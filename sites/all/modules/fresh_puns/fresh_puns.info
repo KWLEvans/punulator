@@ -3,3 +3,6 @@ description = Fresh pun ajax loader module
 package = Pun Tools (Ptools)
 core = 7.x
 files[] = fresh_puns.module
+files[] = fresh_puns.test
+dependencies[] = simpletest
+dependencies[] = ptools
