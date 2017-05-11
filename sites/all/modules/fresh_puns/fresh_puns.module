@@ -6,6 +6,12 @@ function fresh_puns_menu() {
           'page arguments' => array(1,2),
           'type' => MENU_CALLBACK,
   );
+  $items['punspiration'] = array(
+    'title' => 'Punspiration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fresh_puns_form'),
+    'access callback' => TRUE,
+  );
   return $items;
 }
 
@@ -17,6 +23,7 @@ function fresh_puns_ajax_callback($js,$nid) {
     drupal_goto('node/'.$node->nid);
   }
 
+
   $build = node_view($node);
   $html = render($build);
 
@@ -25,4 +32,48 @@ function fresh_puns_ajax_callback($js,$nid) {
 
   print ajax_render($commands);
   exit;
+}
+
+function fresh_puns_form() {
+  $form = array();
+  $form['#prefix'] = "<div id='rhyme'></div>";
+  $form['word'] = array(
+    '#title' => t('Word'),
+    '#description' => t('What word do you want to rhyme?'),
+    '#type' => 'textfield',
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Inspire me!'),
+    '#ajax' => array(
+      'callback' => 'punspiration_callback',
+      'wrapper' => 'rhyme',
+      'effect' => 'fade',
+    ),
+  );
+  return $form;
+}
+
+function parse_return($return) {
+  $decoded_object = json_decode($return->data);
+  $container_array = array();
+  foreach ($decoded_object as $object) {
+    $container_array[] = $object->word;
+  }
+  return implode(', ', $container_array);
+}
+
+function punspiration_callback($form, &$form_state) {
+  $word = $form_state['values']['word'];
+  $url = 'https://api.datamuse.com/words?rel_rhy=' . $word;
+  $api_response = drupal_http_request($url);
+  // $text = json_decode($api_response->data);
+  // $rhyming_words = array();
+  // foreach ($text as $object) {
+  //   $rhyming_words[] = $object->word;
+  // }
+
+  return parse_return($api_response);
 }

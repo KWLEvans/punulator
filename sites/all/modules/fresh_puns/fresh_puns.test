@@ -52,3 +52,30 @@ class FreshPunTestCase extends DrupalWebTestCase {
         return user_save($user);
   }
 }
+
+class FreshPunAJAXTestCase extends DrupalUnitTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Fresh Pun Unit Tests',
+      'description' => 'Tests for Fresh Pun AJAX calls',
+      'group' => 'Ptools',
+    );
+  }
+
+  function testNoJSRedirect() {
+    $description = 'If javascript is disabled';
+
+    //Arrange
+    $settings = array(
+      'type' => 'pun',
+      'title' => $this->randomName(10),
+      'body' => array(LANGUAGE_NONE => array(array($this->randomName(61)))),
+    );
+    $node = $this->drupalCreateNode($settings);
+
+    $path = fresh_puns_ajax_callback('nojs',$node->$nid);
+    var_dump($path);
+    $this->assertTrue($path, $description);
+  }
+
+}
