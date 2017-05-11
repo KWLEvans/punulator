@@ -12,10 +12,6 @@ You will need one of the following server management programs properly installed
 
 ## Installation
 
-**Hosted**: This site is hosted on Puntheon [here]()
-
-**-Or to run locally-**
-
 **Step 1**: Clone this repository to your local computer
 
 ```console
